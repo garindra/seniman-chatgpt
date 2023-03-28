@@ -8,7 +8,7 @@ async function fetchMessageHistory() {
   return [];
 }
 
-function createCodeContainer() {
+function createCodeblockContainer() {
   let hasContentStarted = false;
   let languageBuffer = '';
   let _setLanguageFn = null;
@@ -59,6 +59,30 @@ function createCodeContainer() {
   return codeContainer;
 }
 
+function createCodespanContainer() {
+  let codespanContainer = {
+    childStream: useStream([]),
+
+    pushToken: (token) => {
+      codespanContainer.childStream.push(token);
+
+      if (token === '`') {
+        return { type: 'exit' };
+      }
+    },
+
+    componentFn: () => {
+      return <code style={{ fontFamily: 'monospace', fontWeight: '600' }}>
+        {codespanContainer.childStream.view(token => token)}
+      </code>;
+    }
+  };
+
+  codespanContainer.pushToken('`'); // show the first backtick
+
+  return codespanContainer;
+}
+
 function createContainer(type) {
   let c = {
     type,
@@ -66,7 +90,12 @@ function createContainer(type) {
 
     pushToken: (token) => {
       if (token === '```') {
-        let container = createCodeContainer();
+        let container = createCodeblockContainer();
+        c.childStream.push(container);
+
+        return { type: 'enter', container: container };
+      } else if (token === '`') {
+        let container = createCodespanContainer();
         c.childStream.push(container);
 
         return { type: 'enter', container: container };
@@ -108,7 +137,6 @@ function createContainer(type) {
 
 let userWrapperStyle = { background: "#eee", borderRadius: '5px', maxWidth: '400px', width: 'auto', padding: '2px 15px', marginBottom: '20px', lineHeight: '1.5', fontSize: '14px', display: 'inline-block', alignSelf: 'flex-end' };
 let assistantWrapperStyle = { background: "#555", color: "#fff", borderRadius: '5px', maxWidth: '400px', width: 'auto', padding: '2px 15px', marginBottom: '20px', lineHeight: '1.5', fontSize: '14px', display: 'inline-block', alignSelf: 'flex-start' };
-
 
 function Message(props) {
   let { role, tokenizer } = props;
@@ -300,7 +328,6 @@ function Head() {
 }
 
 let server = createServer({ Body, Head });
-
 server.listen(3020);
 
 console.log("Server listening on port 3020");

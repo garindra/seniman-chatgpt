@@ -2,7 +2,7 @@
   "dependencies": {
     "chatgpt": "^5.1.2",
     "immer": "^9.0.21",
-    "seniman": "^0.0.81"
+    "seniman": "^0.0.82"
   },
   "type": "module",
   "scripts": {
