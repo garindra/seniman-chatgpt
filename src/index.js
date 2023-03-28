@@ -302,3 +302,5 @@ function Head() {
 let server = createServer({ Body, Head });
 
 server.listen(3020);
+
+console.log("Server listening on port 3020");
