@@ -11,8 +11,8 @@ npm install
 ```bash
 npm run build
 ```
-4. Start the server
+4. Start the server (passing your OpenAI API key as an environment variable)
 ```bash
-npm start
+OPENAI_API_KEY=<...> npm start
 ```
 5. Open the app at `http://localhost:3020`
