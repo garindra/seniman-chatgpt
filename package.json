@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "chatgpt": "^5.1.2",
+    "immer": "^9.0.21",
+    "seniman": "^0.0.81"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@babel/cli": "^7.21.0",
+    "babel-plugin-seniman": "^0.0.9"
+  }
+}
