@@ -1,5 +1,6 @@
 import { createServer } from 'seniman/server';
 import { useState, useStream, useClient } from 'seniman';
+import { throttle } from 'throttle-debounce';
 import { API_requestCompletionStream } from './api.js';
 import { Tokenizer } from './token.js';
 
@@ -200,7 +201,6 @@ function createTokenizerFromText(text) {
   return tokenizer;
 }
 
-
 function ConversationThread(props) {
   let [isThreadEmpty, set_isThreadEmpty] = useState(true);
   let [isBotTyping, set_isBotTyping] = useState(false);
@@ -227,6 +227,7 @@ function ConversationThread(props) {
     });
 
   let onSubmit = async (userText) => {
+    scrollToBottom();
     set_isThreadEmpty(false);
     set_isBotTyping(true);
 
@@ -244,6 +245,8 @@ function ConversationThread(props) {
 
     API_requestCompletionStream(API_KEY, conversationMessagesContext, (rawToken) => {
       tokenizer.feedInputToken(rawToken);
+
+      scrollToBottom();
 
       if (rawToken != '[DONE]') {
         assistantMessageContext.content += rawToken;
@@ -278,6 +281,16 @@ function ConversationThread(props) {
     }));
   }
 
+  // create a debounced function that scrolls the window to the bottom
+  let scrollToBottom = throttle(300, () => {
+    client.exec($c(() => {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    }));
+  });
+
   return <>
     <div style={{ background: "#555" }}>
       <div style={{ margin: "0 auto", width: "100%", maxWidth: "600px", padding: '10px' }}>
@@ -289,12 +302,13 @@ function ConversationThread(props) {
         SenimanGPT
       </div>
     </div> : null}
-    <div style={{ paddingBottom: "100px" }}>
+    <div style={{ paddingBottom: "120px" }}>
       {messageStream.view(message => <Message role={message.role} tokenizer={message.tokenizer} />)}
     </div>
-
     <div style={{ width: "100%", maxWidth: "600px", margin: '0 auto', position: 'fixed', bottom: '0px', left: '50%', transform: 'translateX(-50%)' }}>
-      <div style={{ padding: '10px', zIndex: 100 }}>
+      <div style={{
+        padding: '10px',
+      }}>
         <textarea id="textbox" disabled={isBotTyping()} placeholder={isBotTyping() ? "Bot is writing..." : "Write a message to the bot.."} onKeyDown={$c(e => {
           // get value from textarea with whitespace trimmed
           let value = e.target.value.trim();
@@ -306,7 +320,7 @@ function ConversationThread(props) {
             e.preventDefault();
           }
         })}
-          style={{ borderRadius: '5px', padding: '10px', height: 'auto', background: '#666', border: 'none', width: '100%', color: '#fff', boxSizing: 'border-box', fontFamily: 'inherit', resize: 'none' }}
+          style={{ opacity: isBotTyping() ? '0.3' : '1.0', borderRadius: '5px', padding: '10px', height: 'auto', background: '#666', border: 'none', width: '100%', color: '#fff', boxSizing: 'border-box', fontFamily: 'inherit', resize: 'none' }}
         ></textarea>
       </div>
     </div >

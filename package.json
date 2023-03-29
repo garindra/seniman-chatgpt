@@ -2,7 +2,8 @@
   "dependencies": {
     "chatgpt": "^5.1.2",
     "immer": "^9.0.21",
-    "seniman": "^0.0.82"
+    "seniman": "^0.0.82",
+    "throttle-debounce": "^5.0.0"
   },
   "type": "module",
   "scripts": {
