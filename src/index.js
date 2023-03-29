@@ -3,6 +3,12 @@ import { useState, useStream, useClient } from 'seniman';
 import { API_requestCompletionStream } from './api.js';
 import { Tokenizer } from './token.js';
 
+const API_KEY = process.env.OPENAI_API_KEY;
+
+if (!API_KEY) {
+  throw new Error('OPENAI_API_KEY environment variable is not set');
+}
+
 async function fetchMessageHistory() {
   // TODO: actually fetch message history
   return [];
@@ -10,7 +16,7 @@ async function fetchMessageHistory() {
 
 function createCodeblockContainer() {
   let hasContentStarted = false;
-  let languageBuffer = '';
+  let prebuffer = '';
   let _setLanguageFn = null;
 
   let codeContainer = {
@@ -18,26 +24,31 @@ function createCodeblockContainer() {
 
     pushToken: (token) => {
       if (token === '```') {
+        // handle the case where the codeblock contents finishes without a newline
+        if (!hasContentStarted && prebuffer) {
+          codeContainer.childStream.push(prebuffer);
+        }
+
         // TODO: start the syntax highlighting process when we exit the code block
         return { type: 'exit' };
       } else if (token == '\n') {
         if (hasContentStarted) {
           codeContainer.childStream.push(token);
         } else {
-          _setLanguageFn && _setLanguageFn(languageBuffer);
+          _setLanguageFn && _setLanguageFn(prebuffer);
           hasContentStarted = true;
         }
       } else {
         if (hasContentStarted) {
           codeContainer.childStream.push(token);
         } else {
-          languageBuffer += token;
+          prebuffer += token;
         }
       }
     },
 
     componentFn: () => {
-      let [language, setLanguage] = useState('none');
+      let [language, setLanguage] = useState('');
 
       // assign the setter to the outer scope to be set when we fully receive 
       // the language identifier up in the pushToken function
@@ -45,7 +56,7 @@ function createCodeblockContainer() {
 
       return <div style={{ margin: '5px 0' }}>
         <div style={{ borderRadius: '5px 5px 0 0', padding: '5px 15px', fontSize: '11px', background: "#888", color: "#fff" }}>
-          {language() == 'none' ? 'Code' : language()}
+          {language() == '' ? 'Code' : language()}
         </div>
         <div class="codeblock" style={{ borderRadius: '0 0 5px 5px', padding: '10px 15px', fontSize: '13px', background: "#000", color: "#fff", overflowX: 'scroll' }}>
           <pre style={{ fontFamily: 'monospace', color: '#ddd' }}>
@@ -191,7 +202,6 @@ function createTokenizerFromText(text) {
   return tokenizer;
 }
 
-const API_KEY = process.env.OPENAI_API_KEY;
 
 function ConversationThread(props) {
   let [isBotTyping, set_isBotTyping] = useState(false);
