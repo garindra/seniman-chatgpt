@@ -1,5 +1,5 @@
 # seniman-chatgpt
-A ChatGPT UI built in [Seniman](https://github.com/senimanjs/seniman).
+A fast, light ChatGPT UI built with [Seniman](https://github.com/senimanjs/seniman). Loads with only 3KB of JS upfront, and uses WebSockets to stream the interface on-the-fly.
 
 ![Screenshot](img/screenshot.png)
 
@@ -24,10 +24,10 @@ Get your OpenAI API key [here](https://platform.openai.com/account/api-keys).
 ## Network Performance
 Compared to OpenAI's native `chat.openai.com`'s frontend:
 
-OpenAI
-- downloads 600KB of JS upfront 
+#### OpenAI
+- Downloads 600KB of JS upfront 
 - ~160KB of data per message (short code block + 5 sentence paragraph)
 
-Seniman
-- downloads 3KB of JS upfront & 3KB of websocket messages to set up UI
+#### Seniman
+- Downloads 3KB of JS upfront & 3KB of websocket messages to set up UI
 - ~5KB of WS data per message of same size
