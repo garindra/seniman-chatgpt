@@ -54,11 +54,11 @@ function createCodeblockContainer() {
       // the language identifier up in the pushToken function
       _setLanguageFn = setLanguage;
 
-      return <div style={{ margin: '5px 0' }}>
+      return <div style={{ margin: '10px 0' }}>
         <div style={{ borderRadius: '5px 5px 0 0', padding: '5px 15px', fontSize: '11px', background: "#888", color: "#fff" }}>
           {language() == '' ? 'Code' : language()}
         </div>
-        <div class="codeblock" style={{ borderRadius: '0 0 5px 5px', padding: '10px 15px', fontSize: '13px', background: "#000", color: "#fff", overflowX: 'scroll' }}>
+        <div class="codeblock" style={{ borderRadius: '0 0 5px 5px', padding: '10px 15px', fontSize: '12px', background: "#000", color: "#fff", overflowX: 'scroll' }}>
           <pre style={{ fontFamily: 'monospace', color: '#ddd' }}>
             <code>{codeContainer.childStream.view(token => token)}</code>
           </pre>
@@ -131,7 +131,7 @@ function createContainer(type) {
     },
 
     componentFn: () => {
-      return <p style={{ padding: '5px 0' }}>
+      return <p style={{ padding: '10px 0' }}>
         {c.childStream.view((container => {
           if (typeof container == 'string') {
             return container;
@@ -145,9 +145,6 @@ function createContainer(type) {
 
   return c;
 }
-
-let userWrapperStyle = { background: "#eee", borderRadius: '5px', maxWidth: '400px', width: 'auto', padding: '2px 15px', marginBottom: '20px', lineHeight: '1.5', fontSize: '14px', display: 'inline-block', alignSelf: 'flex-end' };
-let assistantWrapperStyle = { background: "#555", color: "#fff", borderRadius: '5px', maxWidth: '400px', width: 'auto', padding: '2px 15px', marginBottom: '20px', lineHeight: '1.5', fontSize: '14px', display: 'inline-block', alignSelf: 'flex-start' };
 
 function Message(props) {
   let { role, tokenizer } = props;
@@ -177,7 +174,6 @@ function Message(props) {
           let newContainer = result.container;
           containerParentStack.push(activeContainer);
           activeContainer = newContainer;
-
         } else if (result.type == 'exit') {
           activeContainer = containerParentStack.pop();
         }
@@ -185,8 +181,10 @@ function Message(props) {
     }
   });
 
-  return <div style={role == 'user' ? userWrapperStyle : assistantWrapperStyle}>
-    {isWaiting() ? "..." : <rootContainer.componentFn />}
+  return <div style={{ fontSize: '13px', color: '#fff', background: role == "assistant" ? "#555" : "#444", lineHeight: '1.5' }}>
+    <div style={{ padding: "0 15px", margin: "0 auto", maxWidth: "600px", color: "#ddd" }}>
+      {isWaiting() ? <div style={{ padding: "15px 0" }}>...</div> : <rootContainer.componentFn />}
+    </div>
   </div>;
 }
 
@@ -204,6 +202,7 @@ function createTokenizerFromText(text) {
 
 
 function ConversationThread(props) {
+  let [isThreadEmpty, set_isThreadEmpty] = useState(true);
   let [isBotTyping, set_isBotTyping] = useState(false);
   let messageStream = useStream([]);
   let conversationMessagesContext = [];
@@ -228,6 +227,7 @@ function ConversationThread(props) {
     });
 
   let onSubmit = async (userText) => {
+    set_isThreadEmpty(false);
     set_isBotTyping(true);
 
     conversationMessagesContext.push({
@@ -279,16 +279,22 @@ function ConversationThread(props) {
   }
 
   return <>
-    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: -1 }}>
-      <div style={{ fontSize: "30px", color: '#aaa' }}>
-        SenimanGPT
+    <div style={{ background: "#555" }}>
+      <div style={{ margin: "0 auto", width: "100%", maxWidth: "600px", padding: '10px' }}>
+        <div style={{ color: "#aaa", fontSize: "12px", fontWeight: "600" }}>SenimanGPT</div>
       </div>
     </div>
-    <div style={{ width: '600px', margin: '0 auto', position: 'relative', height: 'auto' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', paddingTop: '20px', paddingBottom: '80px', position: 'relative' }}>
-        {messageStream.view(message => <Message role={message.role} tokenizer={message.tokenizer} />)}
+    {isThreadEmpty() ? <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: -1 }}>
+      <div style={{ fontSize: "30px", color: '#777' }}>
+        SenimanGPT
       </div>
-      <div style={{ backdropFilter: 'blur(5px)', position: 'fixed', bottom: '15px', zIndex: 100, padding: "5px", width: 'inherit', background: '#666', borderRadius: '5px' }}>
+    </div> : null}
+    <div style={{ paddingBottom: "100px" }}>
+      {messageStream.view(message => <Message role={message.role} tokenizer={message.tokenizer} />)}
+    </div>
+
+    <div style={{ width: "100%", maxWidth: "600px", margin: '0 auto', position: 'fixed', bottom: '0px', left: '50%', transform: 'translateX(-50%)' }}>
+      <div style={{ padding: '10px', zIndex: 100 }}>
         <textarea id="textbox" disabled={isBotTyping()} placeholder={isBotTyping() ? "Bot is writing..." : "Write a message to the bot.."} onKeyDown={$c(e => {
           // get value from textarea with whitespace trimmed
           let value = e.target.value.trim();
@@ -300,7 +306,7 @@ function ConversationThread(props) {
             e.preventDefault();
           }
         })}
-          style={{ border: 'none', width: '100%', color: '#fff', padding: '5px', boxSizing: 'border-box', background: 'transparent', fontFamily: 'inherit', resize: 'none' }}
+          style={{ borderRadius: '5px', padding: '10px', height: 'auto', background: '#666', border: 'none', width: '100%', color: '#fff', boxSizing: 'border-box', fontFamily: 'inherit', resize: 'none' }}
         ></textarea>
       </div>
     </div >
@@ -321,12 +327,12 @@ function Head() {
     <style>
       {`
         body {
-          background:#777;
+          background:#444;
           font-family: Inter;
         }
 
-        input::-webkit-input-placeholder {
-          color: #fff;
+        textarea::-webkit-input-placeholder {
+          color: #999;
         }
 
         textarea:focus {
