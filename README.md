@@ -1,7 +1,8 @@
 # seniman-chatgpt
 A fast, light ChatGPT UI built with [Seniman](https://github.com/senimanjs/seniman). Loads with only 3KB of JS upfront, and uses WebSockets to stream the interface on-the-fly.
 
-![Screenshot](img/screenshot.png)
+https://user-images.githubusercontent.com/510503/228690712-753bd67b-e8c7-4b3d-8b22-f97bf83a855e.mov
+
 
 ## Set up the app
 1. Clone this repository
