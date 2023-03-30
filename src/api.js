@@ -3,6 +3,8 @@ import { createParser } from 'eventsource-parser';
 const API_URL = 'https://api.openai.com/v1';
 const decoder = new TextDecoder('utf-8');
 
+// Acknowledgement:
+// The function is ported from https://github.com/transitive-bullshit/chatgpt-api/blob/main/src/stream-async-iterable.ts
 async function* streamAsyncIterable(stream) {
   const reader = stream.getReader();
   try {
