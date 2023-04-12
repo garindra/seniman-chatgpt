@@ -208,6 +208,7 @@ function ConversationThread(props) {
 function Body() {
   return <div>
     <Link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset.css@2.0.2/reset.min.css" />
+    <Link rel="stylesheet" href="https://unpkg.com/prismjs@0.0.1/themes/prism-tomorrow.css" />
     <Link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap" />
     <Style text={`
         body {
