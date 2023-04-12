@@ -1,14 +1,20 @@
 {
   "dependencies": {
+    "@google-cloud/speech": "^5.4.0",
+    "@google-cloud/text-to-speech": "^4.2.1",
     "chatgpt": "^5.1.2",
     "immer": "^9.0.21",
-    "seniman": "^0.0.83",
-    "throttle-debounce": "^5.0.0"
+    "natural": "^6.2.0",
+    "node-record-lpcm16": "^1.0.1",
+    "seniman": "^0.0.95",
+    "throttle-debounce": "^5.0.0",
+    "ws": "^8.13.0"
   },
   "type": "module",
   "scripts": {
     "build": "npx babel src --out-dir dist",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "dev": "npx concurrently \"npx babel src --out-dir dist/ --watch\" \"nodemon --delay 5ms dist/index.js\""
   },
   "devDependencies": {
     "@babel/cli": "^7.21.0",
