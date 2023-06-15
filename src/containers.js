@@ -47,6 +47,8 @@ function createCodeblockContainer() {
 
         if (language == "javascript") {
           language = "jsx";
+        } else if (language == "php-template") {
+          language = "html";
         }
 
         // tokenize using prism (what would I do to have just a single library to do both :( )
@@ -178,7 +180,7 @@ export function createContainer(type) {
 
     componentFn: () => {
       return <p style={{ padding: '10px 0' }}>
-        {c.childCollection.view((container => {
+        {c.childCollection.map((container => {
           if (typeof container == 'string') {
             return container;
           } else {

@@ -174,7 +174,7 @@ function ConversationThread(props) {
       </div>
     </div> : null}
     <div style={{ paddingBottom: "120px" }}>
-      {messageCollection.view(message => <Message role={message.role} tokenizer={message.tokenizer} />)}
+      {messageCollection.map(message => <Message role={message.role} tokenizer={message.tokenizer} />)}
     </div>
     <div style={{ width: "100%", maxWidth: "600px", margin: '0 auto', position: 'fixed', bottom: '0px', left: '50%', transform: 'translateX(-50%)' }}>
       <div style={{
